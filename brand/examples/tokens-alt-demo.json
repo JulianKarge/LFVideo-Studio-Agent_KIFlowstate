@@ -1,0 +1,60 @@
+{
+  "_hinweis": "Zweites DEMO-Treatment 'Papierwerk' (hell, warm, Serifen). Es existiert nur fuer den Beweis, dass dieselben Beispiele ohne Quelltextaenderung eine andere Marke tragen: node scripts/render.mjs lower-third --tokens brand/examples/tokens-alt-demo.json",
+  "brand": {
+    "name": "Papierwerk",
+    "is_demo": true,
+    "tagline": "Handwerk, Papier, Geduld.",
+    "updated": "2026-10-25"
+  },
+  "color": {
+    "bg": "#F6F1E8",
+    "surface": "#FFFFFF",
+    "surface-2": "#EFE7DA",
+    "text": "#1E1A17",
+    "muted": "#6E645C",
+    "accent": "#D4483B",
+    "accent-2": "#2F6F5E",
+    "on-accent": "#FFFFFF",
+    "line": "#D9CFC0"
+  },
+  "font": {
+    "display": "Playfair Display",
+    "body": "Lato",
+    "mono": "IBM Plex Mono"
+  },
+  "radius": {
+    "sm": 4,
+    "md": 8,
+    "lg": 16
+  },
+  "space": {
+    "xs": 8,
+    "sm": 16,
+    "md": 32,
+    "lg": 64,
+    "xl": 96
+  },
+  "type": {
+    "display": 96,
+    "h1": 72,
+    "h2": 48,
+    "body": 32,
+    "small": 24,
+    "weight-display": 700,
+    "weight-body": 400,
+    "letter-spacing-display": "0em"
+  },
+  "motion": {
+    "fps": 30,
+    "ease-in": "power2.in",
+    "ease-out": "power2.out",
+    "ease-move": "power1.inOut",
+    "duration-fast": 0.3,
+    "duration-base": 0.7,
+    "duration-slow": 1.2
+  },
+  "video": {
+    "width": 1920,
+    "height": 1080
+  }
+}

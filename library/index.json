@@ -1,0 +1,77 @@
+{
+  "_hinweis": "Katalog der Motion-Bibliothek. status: candidate (mitgeliefert oder neu, noch nicht von dir freigegeben) oder approved (von dir freigegeben, Datum in approved_on). Render-Befehle laufen im Studio-Stammordner. Farben, Schriften und Radien kommen bei allen Eintraegen aus brand/tokens.json.",
+  "updated": "2026-10-27",
+  "hyperframes": "0.8.199",
+  "entries": [
+    {
+      "id": "lower-third",
+      "title": "Sprecherkarte (Lower Third)",
+      "purpose": "Person oder neuen Abschnitt vorstellen: Name, Rolle, kurzer Zusatz. Mit Demo-Hintergrund oder als transparentes Overlay.",
+      "source": "library/lower-third/index.html",
+      "readme": "library/lower-third/README.md",
+      "preview": "library/lower-third/preview.png",
+      "duration_seconds": 8,
+      "canvas": { "width": 1920, "height": 1080, "fps": 30 },
+      "variables": [
+        { "id": "name", "type": "string", "default": "Lena Berg" },
+        { "id": "role", "type": "string", "default": "Fotografin und Kursleiterin" },
+        { "id": "tag", "type": "string", "default": "fjordlicht.example" },
+        { "id": "showBackdrop", "type": "boolean", "default": true }
+      ],
+      "media": [],
+      "render": "node scripts/render.mjs lower-third --quality looks --png 3.5",
+      "render_overlay": "node scripts/render.mjs lower-third --format webm --vars \"{\\\"showBackdrop\\\":false}\"",
+      "dependencies": ["hyperframes@0.8.199", "gsap@3.14.2 (CDN)"],
+      "status": "candidate",
+      "approved_on": null
+    },
+    {
+      "id": "point-graphic",
+      "title": "Punkt-Grafik",
+      "purpose": "Zwei bis vier Punkte einer gesprochenen Passage erklaeren oder vergleichen, bildfuellend.",
+      "source": "library/point-graphic/index.html",
+      "readme": "library/point-graphic/README.md",
+      "preview": "library/point-graphic/preview.png",
+      "duration_seconds": 10,
+      "canvas": { "width": 1920, "height": 1080, "fps": 30 },
+      "variables": [
+        { "id": "label", "type": "string", "default": "Praxis-Tipp" },
+        { "id": "title", "type": "string", "default": "Drei Dinge, die jede Aufnahme besser machen" },
+        { "id": "point1", "type": "string", "default": "Licht von der Seite, nie von vorn" },
+        { "id": "point2", "type": "string", "default": "Ein Mikrofon nah am Mund" },
+        { "id": "point3", "type": "string", "default": "Erst Testaufnahme, dann der lange Take" }
+      ],
+      "media": [],
+      "render": "node scripts/render.mjs point-graphic --quality looks --png 5.5",
+      "dependencies": ["hyperframes@0.8.199", "gsap@3.14.2 (CDN)"],
+      "status": "candidate",
+      "approved_on": null
+    },
+    {
+      "id": "floating-preview",
+      "title": "Raeumliche Website-Vorschau",
+      "purpose": "Website, App oder Video als leicht gedrehte, driftende Karte zeigen, waehrend darueber gesprochen wird.",
+      "source": "library/floating-preview/index.html",
+      "readme": "library/floating-preview/README.md",
+      "preview": "library/floating-preview/preview.png",
+      "duration_seconds": 10,
+      "canvas": { "width": 1920, "height": 1080, "fps": 30 },
+      "variables": [
+        { "id": "mediaSrc", "type": "string", "default": "assets/demo-website.png" },
+        { "id": "caption", "type": "string", "default": "fjordlicht.example/kurse" },
+        { "id": "title", "type": "string", "default": "Die neue Kursseite" }
+      ],
+      "media": [
+        {
+          "path": "library/floating-preview/assets/demo-website.png",
+          "replaceable": true,
+          "note": "Selbst gerendert aus library/floating-preview/demo-source/index.html, 1600x1000. Ersetzen ueber die Variable mediaSrc."
+        }
+      ],
+      "render": "node scripts/render.mjs floating-preview --quality looks --png 3",
+      "dependencies": ["hyperframes@0.8.199", "gsap@3.14.2 (CDN)"],
+      "status": "candidate",
+      "approved_on": null
+    }
+  ]
+}

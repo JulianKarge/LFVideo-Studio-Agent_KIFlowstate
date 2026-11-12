@@ -1,0 +1,42 @@
+{
+  "_hinweis": "Pfad-Manifest des Projekts. Pfade relativ zum Projektordner. Unbekanntes bleibt null, bis es geprueft ist.",
+  "name": "<Name>",
+  "created": "JJJJ-MM-TT",
+  "stage": "intake",
+  "scope": {
+    "full_edit": null,
+    "overlays_only": null,
+    "not_requested": []
+  },
+  "output": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "target_duration_seconds": null
+  },
+  "inputs": {
+    "camera": null,
+    "screen": null,
+    "mic": null
+  },
+  "sync": {
+    "reference": "camera",
+    "screen_offset_seconds": null,
+    "mic_offset_seconds": null,
+    "measured_with": "scripts/sync-offset.mjs",
+    "verified_visually": false
+  },
+  "transcript": null,
+  "edit_plan": "PROJECT.md#schnittplan",
+  "composition": null,
+  "graphics": [],
+  "previews": [],
+  "exports": [],
+  "verification": {
+    "ffprobe_ok": false,
+    "first_last_frame_checked": false,
+    "audio_present": null,
+    "notes": ""
+  },
+  "next_step": ""
+}

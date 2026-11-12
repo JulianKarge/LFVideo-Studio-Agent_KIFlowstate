@@ -1,0 +1,256 @@
+<!doctype html>
+<html
+  lang="de"
+  data-composition-variables='[
+    {"id":"label","type":"string","label":"Kicker","default":"Praxis-Tipp"},
+    {"id":"title","type":"string","label":"Titel","default":"Drei Dinge, die jede Aufnahme besser machen"},
+    {"id":"point1","type":"string","label":"Punkt 1","default":"Licht von der Seite, nie von vorn"},
+    {"id":"point2","type":"string","label":"Punkt 2","default":"Ein Mikrofon nah am Mund"},
+    {"id":"point3","type":"string","label":"Punkt 3","default":"Erst Testaufnahme, dann der lange Take"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Punkt-Grafik</title>
+    <!-- brand-tokens:start (erzeugt von scripts/build-tokens.mjs, nicht von Hand aendern) -->
+    <style id="brand-tokens">
+      /* Erzeugt von scripts/build-tokens.mjs aus brand/tokens.json. Nicht von Hand aendern. */
+      /* Marke: Fjordlicht (Demo-Marke) */
+      :root {
+        --color-bg: #0E1A22;
+        --color-surface: #16262F;
+        --color-surface-2: #1F3440;
+        --color-text: #F2F5F7;
+        --color-muted: #9FB1BC;
+        --color-accent: #F5A524;
+        --color-accent-2: #3FB8AF;
+        --color-on-accent: #0E1A22;
+        --color-line: #2C4452;
+        --font-display: "Outfit", system-ui, sans-serif;
+        --font-body: "Inter", system-ui, sans-serif;
+        --font-mono: "JetBrains Mono", system-ui, sans-serif;
+        --radius-sm: 12px;
+        --radius-md: 24px;
+        --radius-lg: 40px;
+        --space-xs: 8px;
+        --space-sm: 16px;
+        --space-md: 32px;
+        --space-lg: 64px;
+        --space-xl: 96px;
+        --type-display: 96px;
+        --type-h1: 72px;
+        --type-h2: 48px;
+        --type-body: 32px;
+        --type-small: 24px;
+        --type-weight-display: 700;
+        --type-weight-body: 400;
+        --type-letter-spacing-display: -0.02em;
+        --motion-fps: 30;
+        --motion-ease-in: "power3.in";
+        --motion-ease-out: "power3.out";
+        --motion-ease-move: "power2.inOut";
+        --motion-duration-fast: 0.25s;
+        --motion-duration-base: 0.6s;
+        --motion-duration-slow: 1.1s;
+        --video-width: 1920px;
+        --video-height: 1080px;
+      }
+    </style>
+    <!-- brand-tokens:end -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--color-bg);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--color-bg);
+        color: var(--color-text);
+        font-family: var(--font-body);
+        font-weight: var(--type-weight-body);
+      }
+
+      /* Layout block inside the action-safe area (96 px left/right, 54 px top/bottom). */
+      .stage {
+        position: absolute;
+        left: calc(var(--space-xl) + var(--space-md));
+        top: calc(var(--space-xl) * 2 + var(--space-md));
+        width: 1400px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .clip {
+        position: relative;
+        display: block;
+        width: 100%;
+      }
+
+      /* Kicker */
+      .kicker {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin: 0;
+        color: var(--color-accent);
+        font-family: var(--font-mono);
+        /* 1.2 x small keeps the kicker above the 28 px reading floor at 1080p. */
+        font-size: calc(var(--type-small) * 1.2);
+        font-weight: var(--type-weight-body);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        line-height: 1.2;
+      }
+      .kicker-rule {
+        display: block;
+        width: 72px;
+        height: 4px;
+        flex: 0 0 auto;
+      }
+
+      /* Title */
+      .title {
+        margin: var(--space-sm) 0 0 0;
+        max-width: 1400px;
+        color: var(--color-text);
+        font-family: var(--font-display);
+        font-size: var(--type-h1);
+        font-weight: var(--type-weight-display);
+        letter-spacing: var(--type-letter-spacing-display);
+        line-height: 1.12;
+        text-wrap: balance;
+      }
+
+      /* Points */
+      .points {
+        margin-top: var(--space-lg);
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+      }
+      .card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        box-sizing: border-box;
+        width: 100%;
+        padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-sm);
+        background: var(--color-surface);
+        border: 1px solid var(--color-line);
+        border-radius: var(--radius-md);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      }
+      .badge {
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        width: 72px;
+        height: 72px;
+        border-radius: var(--radius-lg);
+        background: var(--color-accent);
+        color: var(--color-on-accent);
+        font-family: var(--font-display);
+        font-size: var(--type-body);
+        font-weight: var(--type-weight-display);
+        line-height: 1;
+      }
+      .point-text {
+        margin: 0;
+        color: var(--color-text);
+        font-family: var(--font-body);
+        font-size: var(--type-body);
+        font-weight: var(--type-weight-body);
+        line-height: 1.3;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="point-graphic"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="10"
+    >
+      <div class="stage">
+        <section id="kicker-clip" class="clip" data-start="0" data-duration="10" data-track-index="0">
+          <p class="kicker">
+            <svg class="kicker-rule" viewBox="0 0 72 4" aria-hidden="true">
+              <line x1="2" y1="2" x2="70" y2="2" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" />
+            </svg>
+            <span class="kicker-text" data-var-text="label">Praxis-Tipp</span>
+          </p>
+        </section>
+
+        <section id="title-clip" class="clip" data-start="0" data-duration="10" data-track-index="1">
+          <h1 class="title" data-var-text="title">Drei Dinge, die jede Aufnahme besser machen</h1>
+        </section>
+
+        <div class="points">
+          <section id="point-1" class="clip" data-start="1.8" data-duration="8.2" data-track-index="2">
+            <div class="card">
+              <div class="badge">1</div>
+              <p class="point-text" data-var-text="point1">Licht von der Seite, nie von vorn</p>
+            </div>
+          </section>
+
+          <section id="point-2" class="clip" data-start="3" data-duration="7" data-track-index="3">
+            <div class="card">
+              <div class="badge">2</div>
+              <p class="point-text" data-var-text="point2">Ein Mikrofon nah am Mund</p>
+            </div>
+          </section>
+
+          <section id="point-3" class="clip" data-start="4.2" data-duration="5.8" data-track-index="4">
+            <div class="card">
+              <div class="badge">3</div>
+              <p class="point-text" data-var-text="point3">Erst Testaufnahme, dann der lange Take</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // One paused timeline, registered under the root data-composition-id.
+      const tl = gsap.timeline({ paused: true });
+
+      const EASE_IN = "power3.out";
+      const EASE_OUT = "power3.in";
+
+      // Kicker: rule draws from the left, text slides in.
+      tl.fromTo(".kicker-rule", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 0.6, ease: EASE_IN }, 0.3);
+      tl.fromTo(".kicker-text", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: EASE_IN }, 0.35);
+
+      // Title reveal.
+      tl.fromTo(".title", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.9, ease: EASE_IN }, 0.6);
+
+      // Points: one card after another. Each card slides up 40 px and fades in, its badge scales from 0.6.
+      const pointTimes = [1.8, 3.0, 4.2];
+      pointTimes.forEach((t, i) => {
+        const card = `#point-${i + 1} .card`;
+        const badge = `#point-${i + 1} .badge`;
+        tl.fromTo(card, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: EASE_IN }, t);
+        tl.fromTo(badge, { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: EASE_IN }, t + 0.1);
+      });
+
+      // Exit: hold until 8.6 s, then everything drifts up and fades out. Background only from 9.8 s.
+      const exitTargets = [".kicker", ".title", "#point-1 .card", "#point-2 .card", "#point-3 .card"];
+      tl.to(exitTargets, { opacity: 0, y: -28, duration: 0.9, ease: EASE_OUT, stagger: 0.06 }, 8.6);
+
+      window.__timelines["point-graphic"] = tl;
+    </script>
+  </body>
+</html>

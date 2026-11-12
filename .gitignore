@@ -1,0 +1,21 @@
+# Schluessel
+.env
+
+# Abhaengigkeiten und Caches
+node_modules/
+.hyperframes/
+.studio/
+.render-index.html
+
+# Renders und grosse Medien (Quelltexte und Vorschaubilder bleiben im Repo)
+**/exports/*
+**/renders/
+**/previews/*.mp4
+**/previews/*.webm
+projects/*/inputs/*
+projects/*/transcripts/*.json
+!**/.gitkeep
+
+# Betriebssystem
+.DS_Store
+Thumbs.db

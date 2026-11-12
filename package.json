@@ -1,0 +1,21 @@
+{
+  "name": "my-video-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Neutrales Starter-Paket fuer ein eigenes, wiederverwendbares KI-Video-Studio mit Hyperframes als Render-Engine.",
+  "hyperframes": {
+    "version": "0.8.199",
+    "note": "Gepinnte Hyperframes-Version. Alle Skripte und Skills nutzen npx --yes hyperframes@<version>. Aktualisieren: Version hier aendern, dann node scripts/check-setup.mjs --render."
+  },
+  "scripts": {
+    "check-setup": "node scripts/check-setup.mjs",
+    "check-setup:render": "node scripts/check-setup.mjs --render",
+    "tokens": "node scripts/build-tokens.mjs",
+    "render": "node scripts/render.mjs",
+    "hf": "npx --yes hyperframes@0.8.199"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,323 @@
+<!doctype html>
+<html
+  lang="de"
+  data-composition-variables='[
+    {"id":"mediaSrc","type":"string","label":"Medium (Bild-Pfad)","default":"assets/demo-website.png"},
+    {"id":"caption","type":"string","label":"URL-Chip","default":"fjordlicht.example/kurse"},
+    {"id":"title","type":"string","label":"Headline","default":"Die neue Kursseite"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Floating Preview (raeumlich bewegte Website-Vorschau)</title>
+    <!-- brand-tokens:start (erzeugt von scripts/build-tokens.mjs, nicht von Hand aendern) -->
+    <style id="brand-tokens">
+      /* Erzeugt von scripts/build-tokens.mjs aus brand/tokens.json. Nicht von Hand aendern. */
+      /* Marke: Fjordlicht (Demo-Marke) */
+      :root {
+        --color-bg: #0E1A22;
+        --color-surface: #16262F;
+        --color-surface-2: #1F3440;
+        --color-text: #F2F5F7;
+        --color-muted: #9FB1BC;
+        --color-accent: #F5A524;
+        --color-accent-2: #3FB8AF;
+        --color-on-accent: #0E1A22;
+        --color-line: #2C4452;
+        --font-display: "Outfit", system-ui, sans-serif;
+        --font-body: "Inter", system-ui, sans-serif;
+        --font-mono: "JetBrains Mono", system-ui, sans-serif;
+        --radius-sm: 12px;
+        --radius-md: 24px;
+        --radius-lg: 40px;
+        --space-xs: 8px;
+        --space-sm: 16px;
+        --space-md: 32px;
+        --space-lg: 64px;
+        --space-xl: 96px;
+        --type-display: 96px;
+        --type-h1: 72px;
+        --type-h2: 48px;
+        --type-body: 32px;
+        --type-small: 24px;
+        --type-weight-display: 700;
+        --type-weight-body: 400;
+        --type-letter-spacing-display: -0.02em;
+        --motion-fps: 30;
+        --motion-ease-in: "power3.in";
+        --motion-ease-out: "power3.out";
+        --motion-ease-move: "power2.inOut";
+        --motion-duration-fast: 0.25s;
+        --motion-duration-base: 0.6s;
+        --motion-duration-slow: 1.1s;
+        --video-width: 1920px;
+        --video-height: 1080px;
+      }
+    </style>
+    <!-- brand-tokens:end -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /*
+        Floating Preview: eine Website-, App- oder Video-Vorschau als schwebende 3D-Karte.
+        Alle Farben, Schriften, Radien und Abstaende kommen aus dem Token-Block oben (erzeugt aus brand/tokens.json).
+        Einzige Ausnahme: rgba(0,0,0,x) fuer Schatten.
+      */
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+      body {
+        background: var(--color-bg);
+        color: var(--color-text);
+        font-family: var(--font-body);
+        font-weight: var(--type-weight-body);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* Hintergrund: Flaeche plus grosser, weicher Glow. Kein Clip, bleibt immer sichtbar. */
+      .bg {
+        position: absolute;
+        inset: 0;
+        background: var(--color-bg);
+      }
+      .bg-glow {
+        position: absolute;
+        left: 560px;
+        top: -260px;
+        width: 1600px;
+        height: 1600px;
+        border-radius: 50%;
+        background: radial-gradient(circle at center, var(--color-surface-2) 0%, var(--color-bg) 62%);
+        opacity: 0.85;
+      }
+
+      /* Headline links */
+      .title-box {
+        position: absolute;
+        left: 128px;
+        top: 0;
+        height: 100%;
+        width: 430px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .title-inner {
+        display: block;
+        opacity: 0;
+      }
+      .title-text {
+        margin: 0;
+        font-family: var(--font-display);
+        font-weight: var(--type-weight-display);
+        font-size: var(--type-h2);
+        line-height: 1.12;
+        letter-spacing: var(--type-letter-spacing-display);
+        color: var(--color-text);
+        overflow-wrap: break-word;
+      }
+      .title-rule {
+        display: block;
+        width: 72px;
+        height: 4px;
+        margin-top: var(--space-sm);
+        border-radius: 2px;
+        background: var(--color-accent);
+      }
+
+      /* 3D-Buehne und Karte */
+      .stage {
+        position: absolute;
+        inset: 0;
+        perspective: 2200px;
+      }
+      .card {
+        position: absolute;
+        left: 570px;
+        top: 175px;
+        width: 1160px;
+        height: 730px;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        border: 1px solid var(--color-line);
+        border-radius: var(--radius-md);
+        background: var(--color-surface);
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.45);
+        overflow: hidden;
+        transform-style: preserve-3d;
+        opacity: 0;
+      }
+      .chrome {
+        flex: none;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 var(--space-sm);
+        gap: var(--space-xs);
+        background: var(--color-surface-2);
+        border-bottom: 1px solid var(--color-line);
+      }
+      .dot {
+        display: block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .dot-1 {
+        background: var(--color-muted);
+      }
+      .dot-2 {
+        background: var(--color-accent);
+      }
+      .dot-3 {
+        background: var(--color-accent-2);
+      }
+      .url-chip {
+        margin-left: var(--space-sm);
+        display: block;
+        flex: 1;
+        max-width: 640px;
+        height: 36px;
+        line-height: 36px;
+        padding: 0 var(--space-sm);
+        border-radius: var(--radius-sm);
+        background: var(--color-surface);
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: var(--type-small);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .viewport {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        background: var(--color-surface);
+      }
+      .viewport img {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        object-position: top center;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="floating-preview"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="10"
+    >
+      <div class="bg" id="bg">
+        <div class="bg-glow"></div>
+      </div>
+
+      <section id="title-clip" class="clip" data-start="0.8" data-duration="7.8">
+        <div class="title-box">
+          <div class="title-inner" id="title-inner">
+            <h1 class="title-text" data-var-text="title">Die neue Kursseite</h1>
+            <span class="title-rule" id="title-rule"></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="card-clip" class="clip" data-start="0" data-duration="9.7">
+        <div class="stage">
+          <div class="card" id="card">
+            <div class="chrome">
+              <span class="dot dot-1"></span>
+              <span class="dot dot-2"></span>
+              <span class="dot dot-3"></span>
+              <span class="url-chip" data-var-text="caption" data-layout-ignore>fjordlicht.example/kurse</span>
+            </div>
+            <div class="viewport" id="viewport">
+              <img id="media" data-var-src="mediaSrc" src="assets/demo-website.png" alt="" data-layout-allow-overflow />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      (function () {
+        const card = document.getElementById("card");
+        const media = document.getElementById("media");
+        const viewport = document.getElementById("viewport");
+        const titleInner = document.getElementById("title-inner");
+        const titleRule = document.getElementById("title-rule");
+
+        // Scrollweg des Bildes: hoechstens 220 px, aber nie weiter als das Bild unten Reserve hat.
+        // Bei einem 16:10-Screenshot ist die Reserve klein, bei hoeheren Screenshots voll ausgenutzt.
+        function build() {
+          const room = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+          const scroll = Math.min(220, room);
+
+          const tl = gsap.timeline({ paused: true });
+
+          // Karte: Einflug 0 bis 1.2 s
+          tl.fromTo(
+            card,
+            { y: 80, x: 120, rotationY: -22, rotationX: 4, scale: 0.92 },
+            { y: 0, x: 120, rotationY: -14, rotationX: 4, scale: 1, duration: 1.2, ease: "power3.out" },
+            0
+          );
+          // Opazitaet getrennt mit Ease-in, damit das erste Bild wirklich nur Hintergrund zeigt.
+          tl.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.in" }, 0);
+          // Pose 2: langsame Drift 1.2 bis 4.5 s
+          tl.to(card, { rotationY: -6, rotationX: 2, x: 40, y: -10, duration: 3.3, ease: "power1.inOut" }, 1.2);
+          // Pose 3: 4.5 bis 7.5 s
+          tl.to(card, { rotationY: -12, rotationX: 3, x: 90, y: 6, duration: 3.0, ease: "power1.inOut" }, 4.5);
+          // Ausflug 8.6 bis 9.7 s
+          tl.to(card, { opacity: 0, y: -60, rotationY: -20, duration: 1.1, ease: "power3.in" }, 8.6);
+
+          // Bild in der Karte scrollt langsam nach oben
+          tl.fromTo(media, { y: 0 }, { y: -scroll, duration: 6, ease: "power1.inOut" }, 1.5);
+
+          // Headline: Einblendung ab 0.8 s, Ausblendung bis 8.6 s
+          tl.fromTo(
+            titleInner,
+            { opacity: 0, x: -40 },
+            { opacity: 1, x: 0, duration: 0.9, ease: "power3.out" },
+            0.8
+          );
+          tl.fromTo(
+            titleRule,
+            { scaleX: 0, transformOrigin: "left center" },
+            { scaleX: 1, duration: 0.8, ease: "power3.out" },
+            1.0
+          );
+          tl.to(titleInner, { opacity: 0, x: -30, duration: 0.5, ease: "power3.in" }, 8.1);
+
+          window.__timelines["floating-preview"] = tl;
+        }
+
+        // Erst bauen, wenn das Bild seine Hoehe hat (sonst waere der Scrollweg 0).
+        if (media.complete && media.naturalHeight > 0) {
+          build();
+        } else {
+          media.addEventListener("load", build, { once: true });
+          media.addEventListener("error", build, { once: true });
+        }
+      })();
+    </script>
+  </body>
+</html>
