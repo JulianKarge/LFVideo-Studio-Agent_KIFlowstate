@@ -12,8 +12,9 @@ Frame für Frame zu Video gerendert. Jedes Beispiel bleibt als editierbarer Quel
 Dieses Paket ist das Begleitmaterial zu Teil 1 einer Video-Serie. Erweiterungen (Shortform, weitere
 Werkzeuge) folgen in den nächsten Teilen.
 
-<!-- TODO(release): Name der Serie und Titel von Teil 1 eintragen, sobald das Video fertig ist. -->
-<!-- TODO(release): Link zum Video eintragen, zum Beispiel: "Das Video zum Paket: <URL>". -->
+Die Serie heisst "KI schneidet deine Videos". Teil 1: "Dein eigener Video-Studio-Agent (Longform)".
+
+Das Video zum Paket: https://youtu.be/vilBacIGMvI
 
 ## Was du brauchst
 
